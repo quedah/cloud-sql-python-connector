@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://www.github.com/GoogleCloudPlatform/cloud-sql-python-connector/compare/v0.4.3...v0.5.0) (2021-12-10)
+
+
+### Features
+
+* expose Connector object to allow multiple connection configurations. ([#210](https://www.github.com/GoogleCloudPlatform/cloud-sql-python-connector/issues/210)) ([cef1ed1](https://www.github.com/GoogleCloudPlatform/cloud-sql-python-connector/commit/cef1ed143717988ac4252abc64cdc4403971ffb4))
+
 ### [0.4.3](https://www.github.com/GoogleCloudPlatform/cloud-sql-python-connector/compare/v0.4.2...v0.4.3) (2021-12-07)
 
 
