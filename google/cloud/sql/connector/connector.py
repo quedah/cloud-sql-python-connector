@@ -68,7 +68,11 @@ class Connector:
         self._ip_types = ip_types
 
     def connect(
-        self, instance_connection_string: str, driver: str, **kwargs: Any
+        self, 
+        instance_connection_string: str, 
+        driver: str, 
+        json_keyfile_dict: str=None,
+        **kwargs: Any
     ) -> Any:
         """Prepares and returns a database connection object and starts a
         background thread to refresh the certificates and metadata.
@@ -84,6 +88,9 @@ class Connector:
         :param: driver:
             A string representing the driver to connect with. Supported drivers are
             pymysql, pg8000, and pytds.
+
+        :param json_keyfile_dict: dict
+            Keyfile json.
 
         :param kwargs:
             Pass in any driver-specific arguments needed to connect to the Cloud
@@ -113,6 +120,7 @@ class Connector:
                 self._keys,
                 self._loop,
                 enable_iam_auth,
+                json_keyfile_dict,
             )
             self._instances[instance_connection_string] = icm
 
@@ -131,7 +139,11 @@ class Connector:
             raise (e)
 
 
-def connect(instance_connection_string: str, driver: str, **kwargs: Any) -> Any:
+def connect(
+        instance_connection_string: str, 
+        driver: str, 
+        json_keyfile_dict: str=None,
+        **kwargs: Any) -> Any:
     """Uses a Connector object with default settings and returns a database
     connection object with a background thread to refresh the certificates and metadata.
     For more advanced configurations, callers should instantiate Connector on their own.
@@ -148,6 +160,9 @@ def connect(instance_connection_string: str, driver: str, **kwargs: Any) -> Any:
         A string representing the driver to connect with. Supported drivers are
         pymysql, pg8000, and pytds.
 
+    :param json_keyfile_dict: dict
+        Keyfile json.
+
     :param kwargs:
         Pass in any driver-specific arguments needed to connect to the Cloud
         SQL instance.
@@ -159,4 +174,8 @@ def connect(instance_connection_string: str, driver: str, **kwargs: Any) -> Any:
     global _default_connector
     if _default_connector is None:
         _default_connector = Connector()
-    return _default_connector.connect(instance_connection_string, driver, **kwargs)
+    return _default_connector.connect(
+        instance_connection_string, 
+        driver, 
+        json_keyfile_dict,
+        **kwargs)

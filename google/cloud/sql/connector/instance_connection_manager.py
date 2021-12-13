@@ -230,6 +230,7 @@ class InstanceConnectionManager:
         keys: concurrent.futures.Future,
         loop: asyncio.AbstractEventLoop,
         enable_iam_auth: bool = False,
+        json_keyfile_dict: dict = {},
     ) -> None:
         # Validate connection string
         connection_string_split = instance_connection_string.split(":")
@@ -249,6 +250,7 @@ class InstanceConnectionManager:
 
         self._user_agent_string = f"{APPLICATION_NAME}/{version}+{driver_name}"
         self._loop = loop
+        self._json_keyfile_dict = json_keyfile_dict
         self._keys = asyncio.wrap_future(keys, loop=self._loop)
         self._auth_init()
 
@@ -348,12 +350,20 @@ class InstanceConnectionManager:
         Google Cloud SQL Admin API.
         """
 
-        credentials, project = google.auth.default(
-            scopes=[
-                "https://www.googleapis.com/auth/sqlservice.admin",
-                "https://www.googleapis.com/auth/cloud-platform",
-            ]
-        )
+        scopes=[
+            "https://www.googleapis.com/auth/sqlservice.admin",
+            "https://www.googleapis.com/auth/cloud-platform",
+        ]
+
+        if self._json_keyfile_dict:
+            from google.oauth2.service_account import Credentials as ServiceAccountCredentials
+            credentials = ServiceAccountCredentials.from_service_account_info(
+                self._json_keyfile_dict, scopes=scopes
+            )
+            print("SQL CONNECTOR FROM KEYFILE")
+        else:
+            credentials, project = google.auth.default(scopes=scopes)
+            print("SQL CONNECTOR FROM DEFAULT")
 
         self._credentials = credentials
 
